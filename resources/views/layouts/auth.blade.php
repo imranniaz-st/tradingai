@@ -149,9 +149,9 @@
     </script>
 
     {{-- livechat --}}
-    {!! json_decode(site('livechat')) !!}
+    {{-- {!! json_decode(site('livechat')) !!} --}}
 
-    
+
 
 </body>
 

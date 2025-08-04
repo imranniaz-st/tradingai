@@ -20,7 +20,7 @@
                             <label for="c_address" class="placeholder-label text-gray-300 ts-gray-2 px-2">Address</label>
                         </div>
                     </div>
-    
+
                     <div class="grid grid-cols-1 gap-5">
                         <div class="relative">
                             <input type="text" name="city" placeholder="City" id="c_city"
@@ -28,7 +28,7 @@
                             <label for="c_city" class="placeholder-label text-gray-300 ts-gray-2 px-2">City</label>
                         </div>
                     </div>
-    
+
                     <div class="grid grid-cols-1 gap-5">
                         <div class="relative">
                             <input type="text" name="state" placeholder="State" id="c_state"
@@ -36,7 +36,7 @@
                             <label for="c_state" class="placeholder-label text-gray-300 ts-gray-2 px-2">State</label>
                         </div>
                     </div>
-    
+
                     <div class="grid grid-cols-1 gap-5">
                         <div class="relative">
                             <input type="text" name="country" placeholder="Country" id="c_country"
@@ -44,7 +44,7 @@
                             <label for="c_country" class="placeholder-label text-gray-300 ts-gray-2 px-2">Country</label>
                         </div>
                     </div>
-    
+
                     <div class="grid grid-cols-1 gap-5">
                         <div class="relative">
                             <input type="text" name="phone" placeholder="Phone" id="c_phone"
@@ -52,7 +52,7 @@
                             <label for="c_phone" class="placeholder-label text-gray-300 ts-gray-2 px-2">Phone</label>
                         </div>
                     </div>
-    
+
                     <div class="grid grid-cols-1 gap-5">
                         <div class="relative">
                             <input type="email" name="email" placeholder="Email" id="c_email"
@@ -60,16 +60,16 @@
                             <label for="c_email" class="placeholder-label text-gray-300 ts-gray-2 px-2">Email</label>
                         </div>
                     </div>
-    
+
                     <div class="grid grid-cols-1">
                         <label for="livechat" class="text-gray-300 ts-gray-2 px-2">Livechat</label>
                         <div class="relative">
                             <textarea  name="livechat" placeholder="Livechat" id="c_livechat"
-                                class="theme1-textarea  pl-3">{!! json_decode(site('livechat')) !!}</textarea>
-                            
+                                {{-- class="theme1-textarea  pl-3">{!! json_decode(site('livechat')) !!}</textarea> --}}
+
                         </div>
                     </div>
-    
+
                     <div class="w-full grid grid-cols-1 gap-5 mt-10 mb-10">
                         <button type="submit" class="bg-purple-500 px-2 py-1 rounded-full transition-all">Save
                             Changes </button>
@@ -78,7 +78,7 @@
 
             </form>
 
-            
+
 
         </div>
 

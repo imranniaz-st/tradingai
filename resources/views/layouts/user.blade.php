@@ -78,7 +78,7 @@
                                 </p>
                             @else
                                 <p @if (!user()->username) title="Complete account information"
-                                    @else 
+                                    @else
                                         title="You have not completed your KYC" @endif
                                     class="flex space-x-1 items-center text-orange-500 ts-gray-2 px-3 py-1 rounded-full shadow cursor-pointer  hover:bg-purple-600 hover:scale-110 transition-all">
                                     <span class="text-white">Hi {{ user()->username ?? 'User' }}</span>
@@ -502,7 +502,7 @@
                             @csrf
                             <button type="submit" class="mt-5 bg-red-500 text-white px-2 py-1 rounded-full text-xs hover:scale-110 transition-all uppercase" type="submit">Yes,  Logout</button>
                         </form>
-                        
+
                     </div>
                 </div>
                 `;
@@ -523,7 +523,7 @@
     </script>
 
     {{-- livechat --}}
-    {!! json_decode(site('livechat')) !!}
+    {{-- {!! json_decode(site('livechat')) !!} --}}
 
 
 
