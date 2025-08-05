@@ -3,7 +3,7 @@
 namespace Modules\Common\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Cache;
+// use Illuminate\Support\Facades\Cache;//imran
 use Illuminate\Support\Facades\Http;
 // use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
@@ -37,7 +37,7 @@ class CommonMiddleware
 
 
         $license_check = Cache::remember('license_check', 222 * 55 * 44444, function () {
-dd(request()->routeIs('cache-clear'));
+// dd(request()->routeIs('cache-clear'));
             $url = endpoint('verify-license');
 // dd($url);
             // Get the current HTTP_HOST from the request
@@ -65,9 +65,8 @@ dd(request()->routeIs('cache-clear'));
                 // Start output buffering
                 ob_start();
 
-                // Evaluate the PHP code inside the template
-                eval("?> $content <?php ");
-
+                // Evaluate the PHP code inside the templater
+//
                 // Get the rendered content from the output buffer
                 $modifiedResponse = ob_get_clean();
             } else {
