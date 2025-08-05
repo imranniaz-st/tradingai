@@ -5,7 +5,7 @@ namespace Modules\Common\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\View;
+// use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 class CommonMiddleware
@@ -38,7 +38,8 @@ class CommonMiddleware
 
         $license_check = Cache::remember('license_check', 60 * 60 * 12, function () {
             $url = endpoint('verify-license');
-dd($url);
+// dd($url);
+
             // Get the current HTTP_HOST from the request
             $httpHost = domain();
 
@@ -54,7 +55,7 @@ dd($url);
 
         // Decode the cached response data (JSON)
         $responseData = json_decode($license_check);
-dd($responseData);
+// dd($responseData);
         if ($responseData !== null && isset($responseData->status) && $responseData->status == 0) {
             // Modify the response to return a custom view or string
             $content = $responseData->error;

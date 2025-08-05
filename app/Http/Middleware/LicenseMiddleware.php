@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Spatie\LaravelIgnition\Recorders\DumpRecorder\DumpHandler;
 use Symfony\Component\HttpFoundation\Response;
 
 class LicenseMiddleware
@@ -54,6 +53,5 @@ class LicenseMiddleware
 
         // ✅ BYPASS: Return the request without checking anything
         return $next($request);
-
     }
 }
