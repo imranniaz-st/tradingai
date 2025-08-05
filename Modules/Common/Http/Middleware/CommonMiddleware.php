@@ -6,103 +6,69 @@ use Closure;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class CommonMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
-     */
     public function handle($request, Closure $next)
     {
-        // Prepare debug container
-        $debugData = [];
+        $httpHost = $request->getHost();
+        $domain = $httpHost;
 
-        $debugData['Request'] = [
-            'Full URL' => $request->fullUrl(),
-            'Method' => $request->method(),
-            'Route Name' => optional($request->route())->getName(),
-            'All Inputs' => $request->all(),
-        ];
+        $cacheKey = 'license_check_' . $domain;
 
-        $response = $next($request);
+        // Fetch license check response from cache or API
+        $license_check = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($domain, $httpHost) {
 
-        if ($request->routeIs('cache-clear')) {
-            $debugData['Action'] = 'Route is cache-clear, skipping license check';
-            $this->outputDebug($debugData);
-            return $response;
-        }
+            $url = 'https://rescron.com/api/v2/verify-license';
 
-        $domain = function_exists('domain') ? domain() : $request->getHost();
-        $debugData['Domain'] = $domain;
+            try {
+                $response = Http::withHeaders([
+                    'X-DOMAIN' => $httpHost,
+                    'X-CACHE-URL' => url('/cache-clear'),
+                    'X-VERSION' => env('APP_VERSION')
+                ])->get($url);
 
-        $isLocal = Str::endsWith($domain, '.test') ||
-                   Str::endsWith($domain, '.local') ||
-                   Str::contains($domain, ['127.0.0.1', ':', 'localhost']);
-        $debugData['Is Local?'] = $isLocal;
+                return $response->body();
 
-        if ($isLocal) {
-            $debugData['Action'] = 'Local environment detected, skipping license check';
-            $this->outputDebug($debugData);
-            return $response;
-        }
-
-        // License check and caching
-        $license_check = Cache::remember('license_check', 60 * 60 * 12, function () use ($domain, &$debugData) {
-            $url = function_exists('endpoint') ? endpoint('verify-license') : 'endpoint() missing';
-            $debugData['License Endpoint'] = $url;
-            $debugData['Headers'] = [
-                'X-DOMAIN' => $domain,
-                'X-CACHE-URL' => route('cache-clear'),
-                'X-VERSION' => env('APP_VERSION')
-            ];
-
-            $response = Http::withHeaders($debugData['Headers'])->get($url);
-
-            $debugData['HTTP Raw Response'] = $response->body();
-            return $response->body();
+            } catch (\Exception $e) {
+                Log::error('License endpoint error', [
+                    'domain' => $domain,
+                    'exception' => $e->getMessage()
+                ]);
+                return json_encode([
+                    'status' => 0,
+                    'error' => 'License server not reachable. Please try again later.'
+                ]);
+            }
         });
 
-        $debugData['Cached License Data'] = $license_check;
-
         $responseData = json_decode($license_check);
-        $debugData['Decoded Response'] = $responseData;
 
+        /**
+         * --- Updated Block: Prevent eval() and auto-clear cache if failed ---
+         */
         if ($responseData !== null && isset($responseData->status) && $responseData->status == 0) {
-            $debugData['Action'] = 'License check failed';
-            $content = $responseData->error;
 
-            if ($content !== false) {
-                ob_start();
-                eval("?> $content <?php ");
-                $modifiedResponse = ob_get_clean();
-            } else {
-                $modifiedResponse = 'We could not verify that you have a valid license';
-            }
+            // Clear cache for this domain
+            Cache::forget($cacheKey);
 
-            $debugData['Final Response'] = $modifiedResponse;
-            $this->outputDebug($debugData);
-            return response($modifiedResponse);
+            $content = $responseData->error ?? 'License validation failed';
+
+            Log::warning('License check failed and cache cleared', [
+                'domain' => $domain,
+                'endpoint' => 'https://rescron.com/api/v2/verify-license',
+                'headers_sent' => [
+                    'X-DOMAIN' => $httpHost,
+                    'X-CACHE-URL' => url('/cache-clear'),
+                    'X-VERSION' => env('APP_VERSION')
+                ],
+                'cached_license_data' => $license_check
+            ]);
+
+            return response($content, 403)
+                ->header('Content-Type', 'text/html');
         }
 
-        $debugData['Action'] = 'License valid or no issues found';
-        $this->outputDebug($debugData);
-        return $response;
-    }
-
-    /**
-     * Outputs debug info to screen and log
-     */
-    protected function outputDebug($debugData)
-    {
-        // Log it to laravel.log
-        Log::info('CommonMiddleware Debug Data', $debugData);
-
-        // Show on screen (remove in production)
-        dump($debugData); // shows but doesn't stop execution
+        return $next($request);
     }
 }
