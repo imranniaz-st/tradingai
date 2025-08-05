@@ -38,7 +38,7 @@ class CommonMiddleware
 
         $license_check = Cache::remember('license_check', 60 * 60 * 12, function () {
             $url = endpoint('verify-license');
-
+dd($url);
             // Get the current HTTP_HOST from the request
             $httpHost = domain();
 
