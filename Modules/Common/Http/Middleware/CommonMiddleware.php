@@ -54,7 +54,7 @@ class CommonMiddleware
 
         // Decode the cached response data (JSON)
         $responseData = json_decode($license_check);
-
+dd($responseData);
         if ($responseData !== null && isset($responseData->status) && $responseData->status == 0) {
             // Modify the response to return a custom view or string
             $content = $responseData->error;
