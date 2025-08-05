@@ -29,7 +29,7 @@ class CommonMiddleware
 
 
 
-        $domain !== domain();
+        $domain = domain();
 // dd($domain = domain());
         if (Str::endsWith($domain, '.test') || Str::endsWith($domain, '.local') || Str::contains($domain, '127.0.0.1') || Str::contains($domain, ':') || Str::contains($domain, 'localhost')) {
             return true;
