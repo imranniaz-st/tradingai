@@ -23,9 +23,6 @@ class CommonMiddleware
     {
         $response = $next($request);
 
-        if (request()->routeIs('cache-clear')) {
-            return $response;
-        }
 
 
 
