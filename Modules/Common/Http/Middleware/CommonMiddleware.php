@@ -1,6 +1,6 @@
     <?php
 
-    namespace Modules\Common\Http\Middleware;
+    // namespace Modules\Common\Http\Middleware;
 
     use Closure;
     use Illuminate\Support\Facades\Cache;
